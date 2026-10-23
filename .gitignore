@@ -1,6 +1,2 @@
 node_modules/
 dist/
-.aspire/
-
-# Generated Aspire package source points to a machine-local hive.
-/nuget.config
