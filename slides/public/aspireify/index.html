@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aspireify your app in an hour</title>
+<link rel="stylesheet" href="../shared/reveal/reveal.css">
+<link rel="stylesheet" href="../shared/fonts/fonts.css">
+<link rel="stylesheet" href="../shared/deck.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="cover" data-transition="fade">
+<div class="slide" style="background:linear-gradient(160deg,#171b31 0%,#1b2140 55%,#213051 100%);color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:40px"><div class="ring" style="position:absolute;left:1000px;top:330px;width:1100px;height:440px;background:transparent;border:1px solid rgba(195,173,255,0.28);transform:rotate(-10deg);border-radius:50%"></div>
+<div class="ring" style="position:absolute;left:1150px;top:390px;width:820px;height:330px;background:transparent;border:1px solid rgba(195,173,255,0.28);transform:rotate(12deg);border-radius:50%"></div>
+<img src="../shared/img/aspire-hero.png" alt="" style="position:absolute;left:1180px;top:280px;width:640px;height:492px;object-fit:contain">
+<img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#c3adff;width:1000px">Techorama 2026 · Room 13 · Tue 27 Oct</p>
+<h1 style="font-size:132px;font-weight:600;letter-spacing:-4px;line-height:1.02;width:1040px">Aspireify your app in an hour</h1>
+<div style="display:flex;flex-direction:column;gap:8px;width:1000px">
+<p style="font-size:32px;line-height:1.5;color:#cdc7e8"><b>Maddy Montaquila</b> · Principal PM, Aspire @ Microsoft</p>
+<p style="font-size:32px;line-height:1.5;color:#cdc7e8"><b>Tommaso Stocchi</b> · Cloud Solution Architect, Microsoft</p>
+</div>
+</div>
+<aside class="notes">Welcome! Quick hellos from both of us, then straight in. Set expectations: this is mostly live demo. A few slides to set up the problem, then we take an existing app and Aspireify it on stage, then resources to take home. Timing: ~8 min setup, ~40 min demo, ~8 min wrap and Q&amp;A.</aside>
+</section>
+
+<section id="speakers" data-transition="fade">
+<div class="slide" style="background:linear-gradient(160deg,#171b31 0%,#1b2140 55%,#213051 100%);color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;gap:64px"><img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<h2 style="font-size:72px;font-weight:600;letter-spacing:-2px;line-height:1.08">Who we are</h2>
+<div style="display:flex;gap:48px">
+<div style="flex:1;display:flex;align-items:center;gap:40px;background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:32px;padding:56px">
+<img src="../shared/img/maddy.png" alt="Maddy Montaquila" style="width:180px;height:180px;object-fit:cover;border-radius:50%;border:2px solid rgba(195,173,255,0.4)">
+<div style="flex:1;display:flex;flex-direction:column;gap:8px">
+<h3 style="font-size:44px;font-weight:600;line-height:1.15">Maddy Montaquila</h3>
+<p style="font-size:28px;line-height:1.4;color:#cdc7e8">Principal PM, Aspire @ Microsoft</p>
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:26px;color:#c3adff">@maddymontaquila</p>
+</div>
+</div>
+<div style="flex:1;display:flex;align-items:center;gap:40px;background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:32px;padding:56px">
+<img src="../shared/img/tommaso.png" alt="Tommaso Stocchi" style="width:180px;height:180px;object-fit:cover;border-radius:50%;border:2px solid rgba(195,173,255,0.4)">
+<div style="flex:1;display:flex;flex-direction:column;gap:8px">
+<h3 style="font-size:44px;font-weight:600;line-height:1.15">Tommaso Stocchi</h3>
+<p style="font-size:28px;line-height:1.4;color:#cdc7e8">Cloud Solution Architect, Microsoft</p>
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:26px;color:#c3adff">@tommasodotNET</p>
+</div>
+</div>
+</div>
+</div>
+<aside class="notes">30 seconds each. Maddy: PM on Aspire, works on the CLI and the agent story. Tommaso: CSA, helps customers bring Aspire into real, messy, existing codebases — which is exactly what today is about.</aside>
+</section>
+
+<section id="aspireify" data-transition="fade">
+<div class="slide" style="background:linear-gradient(160deg,#171b31 0%,#1b2140 55%,#213051 100%);color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;gap:36px"><img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<div style="display:flex;align-items:flex-end;gap:40px">
+<h1 style="font-size:144px;font-weight:600;letter-spacing:-5px;line-height:1">Aspireify</h1>
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:32px;color:#c3adff;line-height:2.2">/ə-ˈspī-ər-i-ˌfī/ <i>verb</i></p>
+</div>
+<p style="font-size:44px;font-weight:500;line-height:1.3;width:1600px">To add Aspire orchestration to an existing app stack so it becomes easier to run, observe, configure, and deploy.</p>
+<p style="font-size:32px;line-height:1.5;color:#cdc7e8;width:1600px">Usually involves connecting services, dependencies, environment variables, cloud resources, and developer workflows into one cohesive Aspire-powered app model.</p>
+<div style="flex:1"></div>
+<div style="display:flex;gap:64px;border-top:1px solid rgba(195,173,255,0.22);padding:36px 0 0 0">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#c3adff">Example</p>
+<p style="font-size:30px;line-height:1.5;color:#cdc7e8"><i>“We Aspireified our app so the API, frontend, database, cache, and worker all start from one place.”</i></p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#c3adff">Related forms</p>
+<p style="font-size:30px;line-height:1.5;color:#cdc7e8"><b style="color:#f6f3ff">Aspireified</b> <i>adj.</i> — an app orchestrated by Aspire</p>
+<p style="font-size:30px;line-height:1.5;color:#cdc7e8"><b style="color:#f6f3ff">Aspirification</b> <i>noun</i> — the process of Aspireifying a stack</p>
+</div>
+</div>
+</div>
+<aside class="notes">The whole talk in one word. Aspireify = take something that already exists and add Aspire to it. No rewrite, no new framework, no migrating your deployments. By the end of the hour we want you to believe you can do this to your own app this afternoon.</aside>
+</section>
+
+<section id="city" data-transition="fade">
+<div class="slide" style="background:linear-gradient(160deg,#171b31 0%,#1b2140 55%,#213051 100%);color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:64px"><img src="../shared/img/city-map-dark.png" alt="A tangled transit map of services with no clear route" style="position:absolute;left:1120px;top:120px;width:686px;height:810px;object-fit:contain">
+<img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<h2 style="font-size:80px;font-weight:500;letter-spacing:-2px;line-height:1.1;color:#cdc7e8;width:900px">Modern apps are like being in a <b style="color:#f6f3ff">big city without a map</b></h2>
+<div style="display:grid;grid-template-columns:300px 300px 300px;gap:28px 24px">
+<div style="display:flex;align-items:center;gap:16px"><div style="width:20px;height:20px;border-radius:50%;background:#7c5cff"></div><p style="font-size:26px;font-weight:500">Env</p></div>
+<div style="display:flex;align-items:center;gap:16px"><div style="width:20px;height:20px;border-radius:50%;background:#c43ad6"></div><p style="font-size:26px;font-weight:500">Frontends</p></div>
+<div style="display:flex;align-items:center;gap:16px"><div style="width:20px;height:20px;border-radius:50%;background:#ff5a6e"></div><p style="font-size:26px;font-weight:500">Backends</p></div>
+<div style="display:flex;align-items:center;gap:16px"><div style="width:20px;height:20px;border-radius:50%;background:#1f8fff"></div><p style="font-size:26px;font-weight:500">Services</p></div>
+<div style="display:flex;align-items:center;gap:16px"><div style="width:20px;height:20px;border-radius:50%;background:#14a7a7"></div><p style="font-size:26px;font-weight:500">Observability</p></div>
+<div style="display:flex;align-items:center;gap:16px"><div style="width:20px;height:20px;border-radius:50%;background:#4ea8ff"></div><p style="font-size:26px;font-weight:500">Agents + AI</p></div>
+<div style="display:flex;align-items:center;gap:16px"><div style="width:20px;height:20px;border-radius:50%;background:#2bb59a"></div><p style="font-size:26px;font-weight:500">Manifests + scripts</p></div>
+<div style="display:flex;align-items:center;gap:16px"><div style="width:20px;height:20px;border-radius:50%;background:#3fbf7f"></div><p style="font-size:26px;font-weight:500">Editor / IDE</p></div>
+<div style="display:flex;align-items:center;gap:16px"><div style="width:20px;height:20px;border-radius:50%;background:#c9a400"></div><p style="font-size:26px;font-weight:500">Deploy handoff</p></div>
+</div>
+</div>
+<aside class="notes">Raise of hands: who has an app where “clone and run” is a 40-step README? Every line on this map is something you have to know about to run your app — env vars, ports, containers, which terminal runs what. Nobody has the full map, and neither does your coding agent.</aside>
+</section>
+
+<section id="pain" data-transition="fade">
+<div class="slide" style="background:linear-gradient(160deg,#171b31 0%,#1b2140 55%,#213051 100%);color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;gap:64px"><img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<h2 style="font-size:72px;font-weight:600;letter-spacing:-2px;line-height:1.08">Complex dev, complex deploy</h2>
+<div style="display:flex;gap:48px;flex:1">
+<div style="flex:1;display:flex;flex-direction:column;gap:28px;background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:32px;padding:56px">
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#c3adff">Dev loop</p>
+<ul style="font-size:30px;line-height:1.45;color:#cdc7e8;display:flex;flex-direction:column;gap:16px">
+<li>Impossible to “clone and run”</li>
+<li>No easy way to add new services</li>
+<li>Local dev doesn’t reflect the real system</li>
+<li>Coding agents can’t see the whole app</li>
+</ul>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:28px;background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:32px;padding:56px">
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#c3adff">Deployments</p>
+<ul style="font-size:30px;line-height:1.45;color:#cdc7e8;display:flex;flex-direction:column;gap:16px">
+<li>Fragile, always-changing assets</li>
+<li>Painful handoffs for architecture changes</li>
+<li>“Only in prod” observability</li>
+<li>Configuration drift</li>
+</ul>
+</div>
+</div>
+</div>
+<aside class="notes">Two halves of the same problem. Locally: onboarding takes days, adding a service means touching five files, and agents are guessing. Deploy side: the topology lives in someone’s head and a pile of YAML. Keep this fast — the demo is where we prove the fix.</aside>
+</section>
+
+<section id="what" data-transition="fade">
+<div class="slide" style="background:#0f0d1d;color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:48px"><div class="ring" style="position:absolute;left:1240px;top:-180px;width:900px;height:900px;background:transparent;border:1px solid rgba(195,173,255,0.22);border-radius:50%"></div>
+<div class="ring" style="position:absolute;left:1420px;top:0px;width:560px;height:560px;background:transparent;border:1px solid rgba(195,173,255,0.22);border-radius:50%"></div>
+<img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#c3adff">What is Aspire?</p>
+<div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:0px 26px;width:1600px">
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap">Aspire</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap">is</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap">an</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap;background:linear-gradient(90deg,#c3adff,#f08bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">agent-ready,</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap;background:linear-gradient(90deg,#c3adff,#f08bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">code-first</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap">tool</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap">to</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap;background:linear-gradient(90deg,#c3adff,#f08bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">compose,</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap;background:linear-gradient(90deg,#c3adff,#f08bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">debug,</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap">and</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap;background:linear-gradient(90deg,#c3adff,#f08bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">deploy</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap">any</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap">distributed</p>
+<p style="font-size:96px;font-weight:600;letter-spacing:-3px;line-height:1.15;white-space:nowrap">app.</p>
+</div>
+<p style="font-size:36px;line-height:1.5;color:#cdc7e8;width:1400px">Any language. Any cloud. No rewrites.</p>
+</div>
+<aside class="notes">The one-liner. Emphasize “any”: frontends in JS, APIs in .NET, Python, Go, Java — containers or executables. And “no rewrites”: Aspire wraps what you already have.</aside>
+</section>
+
+<section id="pieces" data-transition="fade">
+<div class="slide" style="display:flex; flex-direction:column; gap:64px; padding:208px 128px 128px; background:linear-gradient(160deg, #171b31 0%, #1b2140 55%, #213051 100%)"><img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute; top:80px; left:128px; width:226px; height:56px; object-fit:contain">
+  <h2 style="font-family:Poppins, Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.08; letter-spacing:-2px; color:#f6f3ff">Four pieces you’ll see in the demo</h2>
+  <div style="display:flex; flex-direction:row; gap:32px; flex:1">
+    <div style="display:flex; flex-direction:column; gap:20px; flex:1; padding:44px 40px; background:#ffffff0a; border:1px solid #c3adff38; border-radius:32px">
+      <div style="width:80px; height:80px; display:flex; flex-direction:row; align-items:center; justify-content:center; background:#c3adff1f; border-radius:20px">
+        <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:44px; height:44px; color:#c3adff"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
+      </div>
+      <h3 style="font-family:Poppins, Arial, sans-serif; font-size:40px; font-weight:600; line-height:1.2; color:#f6f3ff">AppHost</h3>
+      <p style="font-family:Poppins, Arial, sans-serif; font-size:28px; line-height:1.5; color:#cdc7e8">The code-first map of your app: every service and how they connect. C# or TypeScript.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:20px; flex:1; padding:44px 40px; background:#ffffff0a; border:1px solid #c3adff38; border-radius:32px">
+      <div style="width:80px; height:80px; display:flex; flex-direction:row; align-items:center; justify-content:center; background:#c3adff1f; border-radius:20px">
+        <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:44px; height:44px; color:#c3adff"><ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M3 5V19A9 3 0 0 0 21 19V5" /><path d="M3 12A9 3 0 0 0 21 12" /></svg>
+      </div>
+      <h3 style="font-family:Poppins, Arial, sans-serif; font-size:40px; font-weight:600; line-height:1.2; color:#f6f3ff">Integrations</h3>
+      <p style="font-family:Poppins, Arial, sans-serif; font-size:28px; line-height:1.5; color:#cdc7e8">100+ packages for databases, caches, queues, AI and clouds. Opinionated by default.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:20px; flex:1; padding:44px 40px; background:#ffffff0a; border:1px solid #c3adff38; border-radius:32px">
+      <div style="width:80px; height:80px; display:flex; flex-direction:row; align-items:center; justify-content:center; background:#c3adff1f; border-radius:20px">
+        <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:44px; height:44px; color:#c3adff"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>
+      </div>
+      <h3 style="font-family:Poppins, Arial, sans-serif; font-size:40px; font-weight:600; line-height:1.2; color:#f6f3ff">Dashboard</h3>
+      <p style="font-family:Poppins, Arial, sans-serif; font-size:28px; line-height:1.5; color:#cdc7e8">Logs, traces, metrics and resources in one place — plus an MCP server for agents.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:20px; flex:1; padding:44px 40px; background:#ffffff0a; border:1px solid #c3adff38; border-radius:32px">
+      <div style="width:80px; height:80px; display:flex; flex-direction:row; align-items:center; justify-content:center; background:#c3adff1f; border-radius:20px">
+        <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:44px; height:44px; color:#c3adff"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" /></svg>
+      </div>
+      <h3 style="font-family:Poppins, Arial, sans-serif; font-size:40px; font-weight:600; line-height:1.2; color:#f6f3ff">CLI</h3>
+      <p style="font-family:Poppins, Arial, sans-serif; font-size:28px; line-height:1.5; color:#cdc7e8">One agent-ready control plane to create, run and deploy the whole thing.</p>
+    </div>
+  </div>
+</div>
+<aside class="notes">Don’t teach these in depth — the demo does that. Just name them so people recognize them on screen: AppHost is the map, integrations are the building blocks, the dashboard is where you see it all, and the CLI drives it (and gives your coding agent context).</aside>
+</section>
+
+<section id="demo" data-transition="fade">
+<div class="slide" style="background:#0f0d1d;color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;justify-content:flex-end;gap:24px"><div class="ring" style="position:absolute;left:1100px;top:-200px;width:960px;height:960px;background:transparent;border:1px solid rgba(195,173,255,0.28);border-radius:50%"></div>
+<div class="ring" style="position:absolute;left:1300px;top:0px;width:560px;height:560px;background:transparent;border:1px solid rgba(195,173,255,0.28);border-radius:50%"></div>
+<img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:32px;font-weight:600;color:#c3adff">Live</p>
+<h1 style="font-size:200px;font-weight:600;letter-spacing:-6px;line-height:1">Demo</h1>
+<p style="font-size:32px;line-height:1.5;color:#cdc7e8;width:1200px">Starting point: a “simple” bingo app</p>
+</div>
+<aside class="notes">Switch to the demo machine. Show the “before”: the README, the terminals, the .env file. Then aspire init. Rough flow: init (5 min), model with integrations (10), run and observe in the dashboard (10), make it yours with parameters and commands (8), hand off to an agent and publish (7). The CLI cheat sheet and AppHost code slides that follow are backups — skip them if the demo is flowing.</aside>
+</section>
+
+<section id="cli" data-transition="fade">
+<div class="slide" style="background:#0f0d1d;color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;gap:48px"><img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<div style="display:flex;align-items:flex-end;justify-content:space-between">
+<h2 style="font-size:72px;font-weight:600;letter-spacing:-2px;line-height:1.08">CLI cheat sheet</h2>
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:28px;color:#c3adff">Install: get.aspire.dev</p>
+</div>
+<table style="font-size:26px;color:#cdc7e8;border:1px solid rgba(195,173,255,0.22)">
+<tr style="background:#221f3a"><th style="width:38%;color:#f6f3ff">Command</th><th style="width:62%;color:#f6f3ff">What it does</th></tr>
+<tr><td style="font-family:'Fira Code', 'Courier New', monospace;color:#c3adff">aspire init</td><td>Add an AppHost to an existing app</td></tr>
+<tr><td style="font-family:'Fira Code', 'Courier New', monospace;color:#c3adff">aspire new</td><td>Start a new app from a template</td></tr>
+<tr><td style="font-family:'Fira Code', 'Courier New', monospace;color:#c3adff">aspire add</td><td>Search for and add an integration</td></tr>
+<tr><td style="font-family:'Fira Code', 'Courier New', monospace;color:#c3adff">aspire run</td><td>Run the AppHost, every resource and the dashboard</td></tr>
+<tr><td style="font-family:'Fira Code', 'Courier New', monospace;color:#c3adff">aspire start --isolated</td><td>Run in the background on random ports (worktrees, agents)</td></tr>
+<tr><td style="font-family:'Fira Code', 'Courier New', monospace;color:#c3adff">aspire ps / stop --all</td><td>List or stop running AppHosts</td></tr>
+<tr><td style="font-family:'Fira Code', 'Courier New', monospace;color:#c3adff">aspire publish / deploy</td><td>Generate deployment assets, or deploy directly</td></tr>
+<tr><td style="font-family:'Fira Code', 'Courier New', monospace;color:#c3adff">aspire doctor</td><td>Check your environment is ready</td></tr>
+</table>
+</div>
+<aside class="notes">Backup slide — show it if someone asks “what was that command?” or leave it up during Q&amp;A. Every command is also available from the Aspire VS Code extension.</aside>
+</section>
+
+<section id="apphost" data-transition="fade">
+<div class="slide" style="background:#0f0d1d;color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;gap:48px"><img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<h2 style="font-size:72px;font-weight:600;letter-spacing:-2px;line-height:1.08">Writing the AppHost</h2>
+<div style="display:flex;flex-direction:column;background:#221f3a;border:1px solid rgba(195,173,255,0.22);border-radius:32px;overflow:hidden;font-family:'Fira Code', 'Courier New', monospace">
+<div style="display:flex;align-items:center;gap:40px;padding:20px 40px;border-bottom:1px solid rgba(195,173,255,0.22)">
+<p style="font-size:24px;color:#f6f3ff">apphost.ts</p>
+<div style="flex:1"></div>
+<div style="display:flex;align-items:center;gap:12px"><div style="width:16px;height:16px;border-radius:4px;background:#f08bff"></div><p style="font-size:24px;color:#9c97b8">Aspire.Hosting.Redis</p></div>
+<div style="display:flex;align-items:center;gap:12px"><div style="width:16px;height:16px;border-radius:4px;background:#7fd8ff"></div><p style="font-size:24px;color:#9c97b8">Aspire.Hosting.JavaScript</p></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:32px;padding:40px">
+<div style="display:flex;gap:32px">
+<div style="width:6px;background:#f08bff;border-radius:3px"></div>
+<div style="display:flex;flex-direction:column">
+<p style="font-size:30px;line-height:1.6;color:#cdc7e8;white-space:nowrap"><span style="color:#c3adff">const</span> cache = <span style="color:#c3adff">await</span> builder.<b style="color:#f08bff">addRedis</b>(<span style="color:#9c97b8">"redis"</span>)</p>
+<p style="font-size:30px;line-height:1.6;color:#cdc7e8;white-space:nowrap;padding:0 0 0 72px">.<span style="color:#f6f3ff">withEnvironment</span>(<span style="color:#9c97b8">"ENV_VAR"</span>, <span style="color:#9c97b8">"envvar"</span>)</p>
+<p style="font-size:30px;line-height:1.6;color:#cdc7e8;white-space:nowrap;padding:0 0 0 72px">.<b style="color:#f08bff">withRedisCommander</b>();</p>
+</div>
+</div>
+<div style="display:flex;gap:32px">
+<div style="width:6px;background:#7fd8ff;border-radius:3px"></div>
+<div style="display:flex;flex-direction:column">
+<p style="font-size:30px;line-height:1.6;color:#cdc7e8;white-space:nowrap"><span style="color:#c3adff">await</span> builder.<b style="color:#7fd8ff">addViteApp</b>(<span style="color:#9c97b8">"frontend"</span>, <span style="color:#9c97b8">"../frontend"</span>)</p>
+<p style="font-size:30px;line-height:1.6;color:#cdc7e8;white-space:nowrap;padding:0 0 0 72px">.<span style="color:#f6f3ff">withReference</span>(cache)</p>
+<p style="font-size:30px;line-height:1.6;color:#cdc7e8;white-space:nowrap;padding:0 0 0 72px">.<b style="color:#7fd8ff">withYarn</b>()</p>
+<p style="font-size:30px;line-height:1.6;color:#cdc7e8;white-space:nowrap;padding:0 0 0 72px">.<span style="color:#f6f3ff">publishAsDockerfile</span>();</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<aside class="notes">Backup slide for after the Model step. White methods are common to every resource (environment, references, publish behavior). Colored methods come from the integration package — Redis gets a Redis Commander, the Vite app knows about Yarn. Use aspire add to find integrations, then customize in code.</aside>
+</section>
+
+<section id="recap" data-transition="fade">
+<div class="slide" style="background:linear-gradient(160deg,#171b31 0%,#1b2140 55%,#213051 100%);color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;gap:56px"><img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<h2 style="font-size:72px;font-weight:600;letter-spacing:-2px;line-height:1.08">What we just did</h2>
+<div style="display:flex;flex-direction:column;gap:36px">
+<div style="display:flex;align-items:center;gap:32px"><svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;color:#c3adff;width:48px;height:48px"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg><p style="font-size:36px;line-height:1.3"><b>One command</b> <span style="color:#cdc7e8">to clone and run the whole app</span></p></div>
+<div style="display:flex;align-items:center;gap:32px"><svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;color:#c3adff;width:48px;height:48px"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg><p style="font-size:36px;line-height:1.3"><b>One model</b> <span style="color:#cdc7e8">of every service, in code you can review</span></p></div>
+<div style="display:flex;align-items:center;gap:32px"><svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;color:#c3adff;width:48px;height:48px"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg><p style="font-size:36px;line-height:1.3"><b>One dashboard</b> <span style="color:#cdc7e8">for logs, traces, metrics and health</span></p></div>
+<div style="display:flex;align-items:center;gap:32px"><svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;color:#c3adff;width:48px;height:48px"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg><p style="font-size:36px;line-height:1.3"><b>A dev loop</b> <span style="color:#cdc7e8">with your team’s commands built in</span></p></div>
+<div style="display:flex;align-items:center;gap:32px"><svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;color:#c3adff;width:48px;height:48px"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg><p style="font-size:36px;line-height:1.3"><b>An app agents understand</b> <span style="color:#cdc7e8">— and can hand off to deploy</span></p></div>
+</div>
+</div>
+<aside class="notes">Back from the demo. Land the payoff: in under an hour, the same app went from a README full of steps to one command, one model, one dashboard. Nothing about the services themselves had to change.</aside>
+</section>
+
+<section id="nexthour" data-transition="fade">
+<div class="slide" style="background:linear-gradient(160deg,#171b31 0%,#1b2140 55%,#213051 100%);color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;gap:56px"><img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#c3adff">Your next hour</p>
+<h2 style="font-size:72px;font-weight:600;letter-spacing:-2px;line-height:1.08">How Aspireified do you want to get?</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:28px;padding:36px 40px"><p style="font-size:30px;line-height:1.45;color:#cdc7e8">If I reformatted my machine today, what would it take to run my app?</p></div>
+<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:28px;padding:36px 40px"><p style="font-size:30px;line-height:1.45;color:#cdc7e8">What do new teammates always get stuck on?</p></div>
+<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:28px;padding:36px 40px"><p style="font-size:30px;line-height:1.45;color:#cdc7e8">How much of my .env is service wiring vs. real secrets?</p></div>
+<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:28px;padding:36px 40px"><p style="font-size:30px;line-height:1.45;color:#cdc7e8">Which dev scripts belong in the AppHost as commands?</p></div>
+<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:28px;padding:36px 40px"><p style="font-size:30px;line-height:1.45;color:#cdc7e8">Do I work across worktrees and need isolated ports?</p></div>
+<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:28px;padding:36px 40px"><p style="font-size:30px;line-height:1.45;color:#cdc7e8">Which parts of my app should be able to run on their own?</p></div>
+</div>
+</div>
+<aside class="notes">Give people homework. Start with the simplest vertical slice — even just running the frontend — and grow from there. These questions tell you how far to take it. Tip from Oslo: a coding agent with the Aspire skills can do a surprising amount of the first pass.</aside>
+</section>
+
+<section id="deploy" data-transition="fade">
+<div class="slide" style="background:linear-gradient(160deg,#171b31 0%,#1b2140 55%,#213051 100%);color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;gap:56px"><img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<h2 style="font-size:72px;font-weight:600;letter-spacing:-2px;line-height:1.08">“But what about production?”</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1">
+<div style="display:flex;flex-direction:column;gap:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:32px;padding:44px 48px">
+<h3 style="font-size:36px;font-weight:600;line-height:1.2">Keep your deployments</h3>
+<p style="font-size:28px;line-height:1.5;color:#cdc7e8">Use Aspire just for the dev loop. Your pipelines don’t have to change.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:32px;padding:44px 48px">
+<h3 style="font-size:36px;font-weight:600;line-height:1.2">A model, not a runtime</h3>
+<p style="font-size:28px;line-height:1.5;color:#cdc7e8">The AppHost describes your app. It isn’t something you run in prod.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:32px;padding:44px 48px">
+<h3 style="font-size:36px;font-weight:600;line-height:1.2">Publish for any target</h3>
+<p style="font-size:28px;line-height:1.5;color:#cdc7e8">Generate Docker Compose, containers and cloud assets — or deploy with the CLI.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(195,173,255,0.22);border-radius:32px;padding:44px 48px">
+<h3 style="font-size:36px;font-weight:600;line-height:1.2">Hand over real artifacts</h3>
+<p style="font-size:28px;line-height:1.5;color:#cdc7e8">Pre-built containers and Compose files your ops team can test end to end.</p>
+</div>
+</div>
+</div>
+<aside class="notes">The question we always get. Short answer: adopting Aspire for dev is zero-risk for prod. When you’re ready, the same model can generate deployment assets. Note: the dashboard can be deployed, but it’s a dev tool, not a production monitoring solution.</aside>
+</section>
+
+<section id="resources" data-transition="fade">
+<div class="slide" style="background:linear-gradient(160deg,#171b31 0%,#1b2140 55%,#213051 100%);color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;gap:48px"><img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<h2 style="font-size:72px;font-weight:600;letter-spacing:-2px;line-height:1.08">Resources</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0px 48px">
+<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(195,173,255,0.22);padding:22px 0"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Docs</p><p style="font-size:32px;font-weight:500"><a href="https://aspire.dev">aspire.dev</a></p></div>
+<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(195,173,255,0.22);padding:22px 0"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Install the CLI</p><p style="font-size:32px;font-weight:500"><a href="https://get.aspire.dev">get.aspire.dev</a></p></div>
+<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(195,173,255,0.22);padding:22px 0"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Integrations</p><p style="font-size:32px;font-weight:500"><a href="https://aspire.dev/integrations">aspire.dev/integrations</a></p></div>
+<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(195,173,255,0.22);padding:22px 0"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Agent skills</p><p style="font-size:32px;font-weight:500"><a href="https://github.com/microsoft/aspire-skills">github.com/microsoft/aspire-skills</a></p></div>
+<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(195,173,255,0.22);padding:22px 0"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Samples</p><p style="font-size:32px;font-weight:500"><a href="https://github.com/microsoft/aspire-samples">github.com/microsoft/aspire-samples</a></p></div>
+<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(195,173,255,0.22);padding:22px 0"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Source</p><p style="font-size:32px;font-weight:500"><a href="https://github.com/microsoft/aspire">github.com/microsoft/aspire</a></p></div>
+<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(195,173,255,0.22);border-bottom:1px solid rgba(195,173,255,0.22);padding:22px 0"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Community</p><p style="font-size:32px;font-weight:500"><a href="https://aka.ms/aspire-discord">aka.ms/aspire-discord</a></p></div>
+<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(195,173,255,0.22);border-bottom:1px solid rgba(195,173,255,0.22);padding:22px 0"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Today’s demo</p><p style="font-size:32px;font-weight:500"><a href="https://aka.ms/aspire/techorama-2026">aka.ms/aspire/techorama-2026</a></p></div>
+</div>
+</div>
+<aside class="notes">Leave this up during Q&amp;A so people can photograph it. Point at the agent skills repo in particular — it’s the fastest way to Aspireify your own app with a coding agent. Make sure the demo repo short link is live before the talk.</aside>
+</section>
+
+<section id="thanks" data-transition="fade">
+<div class="slide" style="background:linear-gradient(160deg,#171b31 0%,#1b2140 55%,#213051 100%);color:#f6f3ff;font-family:'Poppins', Arial, sans-serif;padding:208px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:48px"><div class="ring" style="position:absolute;left:1180px;top:-90px;width:1080px;height:1080px;background:transparent;border:1px solid rgba(195,173,255,0.28);border-radius:50%"></div>
+<div class="ring" style="position:absolute;left:1380px;top:90px;width:720px;height:720px;background:transparent;border:1px solid rgba(195,173,255,0.28);border-radius:50%"></div>
+<img src="../shared/img/aspire-hero.png" alt="" style="position:absolute;left:1260px;top:320px;width:520px;height:400px;object-fit:contain">
+<img src="../shared/img/aspire-logo-light-horizontal.png" alt="Aspire" style="position:absolute;left:128px;top:80px;width:226px;height:56px;object-fit:contain">
+<h1 style="font-size:144px;font-weight:600;letter-spacing:-5px;line-height:1">Thank you</h1>
+<p style="font-size:36px;line-height:1.4;color:#cdc7e8;width:1000px">Go Aspireify something this afternoon — and tell us how it went.</p>
+<div style="display:flex;gap:80px;padding:24px 0 0 0">
+<div style="display:flex;flex-direction:column;gap:6px"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Docs</p><p style="font-size:32px;font-weight:500">aspire.dev</p></div>
+<div style="display:flex;flex-direction:column;gap:6px"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Socials</p><p style="font-size:32px;font-weight:500">@aspiredotdev</p></div>
+<div style="display:flex;flex-direction:column;gap:6px"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Maddy</p><p style="font-size:32px;font-weight:500">@maddymontaquila</p></div>
+<div style="display:flex;flex-direction:column;gap:6px"><p style="font-family:'Fira Code', 'Courier New', monospace;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:#c3adff">Tommaso</p><p style="font-size:32px;font-weight:500">@tommasodotNET</p></div>
+</div>
+<p style="font-size:28px;color:#9c97b8">Please rate this session in the Techorama app.</p>
+</div>
+<aside class="notes">Thank everyone, remind them to rate the session, and invite them to find us after for questions or to look at their own app. Flip back to the Resources slide if Q&amp;A runs long.</aside>
+</section>
+</div>
+</div>
+<script src="../shared/reveal/reveal.js"></script>
+<script src="../shared/reveal/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+  width: 1920,
+  height: 1080,
+  margin: 0,
+  minScale: 0.1,
+  maxScale: 3,
+  center: false,
+  hash: true,
+  controls: false,
+  progress: true,
+  transition: 'fade',
+  backgroundTransition: 'fade',
+  plugins: [ RevealNotes ]
+});
+</script>
+</body>
+</html>
