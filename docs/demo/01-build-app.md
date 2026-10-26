@@ -12,8 +12,11 @@ only in Part 2.
 ```text
 Build a small, working application for a live coding demo.
 
-App brief: [Describe the app, its main user workflow, and any preferred languages
-or frameworks.]
+App brief:
+Build a store for [animal] that sells [things you can buy].
+The frontend is [least favorite JS frontend stack] with [decade] style design.
+The backend is [favorite programming language] with [last used database tech] and deploys to [A or B].
+There is an admin dashboard for adding/removing items to the store with password [Bad password ideas].
 
 Inspect the repository and follow its instructions before making changes. If the
 brief leaves implementation details open, choose simple, mainstream defaults.
