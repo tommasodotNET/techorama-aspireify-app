@@ -1,0 +1,5 @@
+.env
+api/catbooks
+api/*.test
+frontend/test-results/
+frontend/playwright-report/

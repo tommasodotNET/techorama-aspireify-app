@@ -1,0 +1,62 @@
+name: purr-and-prose
+
+services:
+  cosmos:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-latest
+    environment:
+      PROTOCOL: http
+      GATEWAY_PUBLIC_ENDPOINT: cosmos
+      ENABLE_EXPLORER: "false"
+      ENABLE_TELEMETRY: "false"
+      DATA_PATH: /data
+    volumes:
+      - cosmos-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/ready"]
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 30
+    restart: unless-stopped
+
+  api:
+    build: ./api
+    environment:
+      HTTP_ADDR: ":8080"
+      COSMOS_ENDPOINT: http://cosmos:8081
+      # Local emulator-only placeholder; vNext does not enforce authentication.
+      COSMOS_KEY: ${COSMOS_KEY:-bG9jYWwtZGVtby1vbmx5LW5vdC1hLXJlYWwtc2VjcmV0}
+      COSMOS_ALLOW_HTTP: "true"
+      COSMOS_DATABASE: catbooks
+      COSMOS_CONTAINER: books
+      # Public, local-only demo credential. Never reuse outside this demo.
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-alligator123}
+    depends_on:
+      cosmos:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/healthz"]
+      interval: 5s
+      timeout: 4s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    environment:
+      API_UPSTREAM: http://api:8080
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-8088}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 4s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  cosmos-data:

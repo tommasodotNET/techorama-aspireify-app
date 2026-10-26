@@ -10,10 +10,13 @@ only in Part 2.
 ## Prompt
 
 ```text
-Build a small, working application for a live coding demo.
+Build a small, working application for a live coding demo. Put the code in the src folder.
 
-App brief: [Describe the app, its main user workflow, and any preferred languages
-or frameworks.]
+App brief:
+The app is a store for [blank] to sell [something].
+There is a frontend written in [blank] with style [blank].
+There ia a backend written in [blank] that talks a storage [blank].
+You have a password protected admin portal where password is [blank].
 
 Inspect the repository and follow its instructions before making changes. If the
 brief leaves implementation details open, choose simple, mainstream defaults.

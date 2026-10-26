@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#582b8a" />
+    <meta name="description" content="Purr & Prose: a very online bookshop, run by cats. Browsing since 1997." />
+    <title>Purr & Prose | Books by cats, for cats</title>
+  </head>
+  <body>
+    <div class="ticker">YOU HAVE REACHED THE GOOD PART OF THE INTERNET &nbsp; *** &nbsp; INDEPENDENT CATS. SECOND-PAW BOOKS. FIRST-CLASS NAPS.</div>
+    <div class="site">
+      <header>
+        <div class="wordmark"><span class="cat-logo" aria-hidden="true">=^.^=</span><div><p class="eyebrow">EST. 1997 / OPEN ALL NINE LIVES</p><h1>Purr <span>&</span> Prose</h1><p class="tagline">The world wide web's coziest cat-run bookshop.</p></div></div>
+        <span class="badge">100%<br />PAW PICKED</span>
+      </header>
+      <nav aria-label="Main navigation">
+        <a href="#shop" id="shop-link" aria-current="page">The bookshelf</a>
+        <a href="#admin" id="admin-link">Staff only</a>
+        <span class="nav-note">No dogs were consulted.</span>
+      </nav>
+      <main>
+        <section id="shop-view" aria-labelledby="shop-heading">
+          <div class="hero">
+            <div><p class="eyebrow">LESS SCROLLING. MORE PURRING.</p><h2 id="shop-heading">Good books.<br />Questionable sellers.</h2><p>A little fiction, a little fish, a lot of cat hair.<br />Discover your next read from our feline booksellers.</p><a class="button" href="#bookshelf">Meet your next obsession &darr;</a></div>
+            <div class="cat-window" aria-hidden="true"><div class="window-bar">cat.exe <span>_ &square; &times;</span></div><pre> /\_/\
+( o.o )
+ &gt; ^ &lt;
+/|___|\
+  | |
+ [___]</pre><p>ONLINE, BUT NAPPING.</p><div class="window-bottom">Books are better than mice.</div></div>
+          </div>
+          <div class="shelf-heading" id="bookshelf"><div><p class="eyebrow">THE CURRENT OBSESSIONS</p><h2>Fresh on the shelf</h2></div><span id="book-count" class="count">Connecting...</span></div>
+          <div class="search-row"><label for="search">Find a book</label><input id="search" type="search" placeholder="Search title, author, or cat seller..." /></div>
+          <div id="catalog-status" role="status" aria-live="polite"></div>
+          <div id="catalog-error" role="alert" hidden><p></p><button id="retry">Try again</button></div>
+          <div id="catalog" class="book-grid"></div>
+          <aside class="notice"><strong>A note from the cats:</strong> This is a tiny listing demo, not a checkout. All prices are in USD. We accept admiration, not payment.</aside>
+        </section>
+        <section id="admin-view" aria-labelledby="admin-heading" hidden>
+          <p class="eyebrow">AUTHORIZED PAWS ONLY</p><h2 id="admin-heading">The back room</h2><p>Add a book to the public shelf, or find it a new home by removing its listing.</p>
+          <form id="login-form" class="panel">
+            <h3>Staff sign in</h3><label for="password">Admin password</label><input id="password" type="password" required autocomplete="current-password" /><button type="submit">Unlock the back room</button><p id="login-error" role="alert"></p>
+          </form>
+          <div id="admin-tools" hidden>
+            <div class="admin-title"><h3>List a second-paw treasure</h3><button id="logout" class="secondary">Lock the back room</button></div>
+            <form id="book-form" class="panel book-form">
+              <div><label for="title">Book title</label><input id="title" name="title" required maxlength="120" /></div>
+              <div><label for="author">Author</label><input id="author" name="author" required maxlength="100" /></div>
+              <div><label for="seller">Cat seller</label><input id="seller" name="seller" required maxlength="80" /></div>
+              <div><label for="price">Price (USD)</label><input id="price" name="price" type="number" min="0.01" max="1000" step="0.01" required /></div>
+              <div class="wide"><label for="description">A little about the book</label><textarea id="description" name="description" maxlength="500" rows="3"></textarea></div>
+              <div class="wide"><button type="submit">Add to the bookshelf</button></div>
+            </form>
+            <p id="admin-message" role="status" aria-live="polite"></p><p id="admin-error" role="alert"></p>
+            <div class="shelf-heading"><h3>Manage the shelf</h3><button id="admin-refresh" class="secondary">Refresh listings</button></div>
+            <div id="admin-list"></div>
+          </div>
+        </section>
+      </main>
+      <footer><span>=^.^= &nbsp; Handmade on the interwebs.</span><span>BEST VIEWED WITH A CAT ON YOUR LAP &nbsp; / &nbsp; &copy; 1997-2026</span></footer>
+    </div>
+    <script type="module" src="/app/main.js"></script>
+  </body>
+</html>
