@@ -31,6 +31,8 @@ services:
       COSMOS_CONTAINER: books
       # Public, local-only demo credential. Never reuse outside this demo.
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-alligator123}
+    ports:
+      - "127.0.0.1:8086:80"
     depends_on:
       cosmos:
         condition: service_healthy

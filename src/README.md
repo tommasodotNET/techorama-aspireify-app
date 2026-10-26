@@ -89,6 +89,52 @@ a trusted local demo. Do not expose this stack to the internet. Real deployment
 would require HTTPS, real identity/access controls, and securely supplied
 database credentials; none of those services are provisioned here.
 
+## Run with the existing Aspire AppHost
+
+The repository also has a file-based `apphost.cs` for local development. This
+workflow requires the Aspire CLI 13.6.4, .NET 10+, Go 1.23+, Node 22.12+, and a
+working container runtime. It runs Go and Vite on the host and starts its own
+Cosmos emulator container; the Compose workflow above remains independent.
+
+From the repository root:
+
+```sh
+# On this Podman machine, select the rootless container socket first:
+export DOCKER_HOST="unix://${XDG_RUNTIME_DIR}/podman/podman.sock"
+
+aspire start --apphost ./apphost.cs
+aspire wait frontend --apphost ./apphost.cs
+aspire describe --apphost ./apphost.cs
+```
+
+Open the `frontend` HTTP URL printed by `aspire describe`, or use the dashboard
+link from startup. Aspire allocates ports dynamically, including the API HTTP
+endpoint and Cosmos HTTPS gateway. The staff portal is `/#admin` on that frontend
+URL and uses the same **local-only** `alligator123` password.
+
+The AppHost supplies `HTTP_ADDR` from the API's allocated target port, passes the
+Cosmos endpoint and emulator key through resource expressions, and waits for
+Cosmos before starting the API and for API readiness before starting Vite.
+Both Cosmos and the Go API use `/shelf` as the partition key. Aspire supplies
+certificate trust for the emulator's HTTPS endpoint; TLS verification is not
+disabled. Cosmos data is stored separately from Compose in the
+`purr-and-prose-aspire-cosmos-data` named volume.
+
+To exercise the existing browser tests against Aspire instead of Compose:
+
+```sh
+cd src/frontend
+BASE_URL=http://localhost:<frontend-port> npm test
+```
+
+For diagnostics and a normal shutdown that preserves the named volume:
+
+```sh
+aspire logs api --apphost ./apphost.cs
+aspire logs frontend --apphost ./apphost.cs
+aspire stop --apphost ./apphost.cs
+```
+
 ## Verification
 
 ```sh
