@@ -11,7 +11,7 @@ shelf -> remove a listing**.
 - Docker Engine / Docker Desktop running Linux containers and Docker Compose v2.
 - Internet access for the first image pulls and dependency restores. Allow a few
   minutes and several GB of disk space for the emulator and build images.
-- Port 8088 free. Go/Node are **not** required to run the containers.
+- Ports 8088, 8086, and 8081 free. Go/Node are **not** required to run the containers.
 - The Linux vNext emulator is a development emulator, not production Cosmos DB.
   See its [limitations and supported platforms](https://learn.microsoft.com/azure/cosmos-db/emulator-linux).
 
@@ -30,6 +30,8 @@ docker compose -f src/compose.yaml up --build -d --wait --wait-timeout 240
 Open **http://localhost:8088**. Staff portal: **http://localhost:8088/#admin**.
 The local-only demo password is **`alligator123`** (API username: `admin`).
 Use the public search to find a title, author, or cat seller.
+The API is also available at **http://localhost:8086** and the Cosmos gateway at
+**http://localhost:8081**; all three host ports bind only to loopback.
 
 ### This machine: Podman compatibility
 
@@ -63,16 +65,17 @@ to the API, so no CORS configuration or browser-visible container DNS is needed.
 | Variable | Default / purpose |
 | --- | --- |
 | `FRONTEND_PORT` | `8088`; Compose host port, bound only to `127.0.0.1` |
-| `ADMIN_PASSWORD` | `alligator123`; local-only demo credential, required by API |
+| `ADMIN_PASSWORD` | `alligator123`; local-only demo default, with a startup warning if unset |
 | `COSMOS_KEY` | Public base64 local-demo placeholder in Compose; required by SDK |
 | `COSMOS_ENDPOINT` | API: `http://cosmos:8081` |
 | `COSMOS_ALLOW_HTTP` | API: `true` only for the local HTTP emulator |
 | `COSMOS_DATABASE` | API: `catbooks` |
 | `COSMOS_CONTAINER` | API: `books` |
-| `HTTP_ADDR` | API listen address: `:8080` |
+| `HTTP_ADDR` | Explicit API listen address; takes precedence over `PORT` |
+| `PORT` | Aspire-managed API port; otherwise the API defaults to `:8080` |
 | `API_UPSTREAM` | Frontend Nginx: `http://api:8080`; Vite dev proxy also accepts it |
 
-The first three can be overridden in the shell when running Compose. Other
+`FRONTEND_PORT`, `ADMIN_PASSWORD`, and `COSMOS_KEY` can be overridden in the shell when running Compose. Other
 values are ordinary service environment entries in `compose.yaml`; change them
 there or provide a Compose override when needed. For example:
 
@@ -81,7 +84,7 @@ FRONTEND_PORT=8090 ADMIN_PASSWORD='another-local-password' docker compose -f src
 ```
 
 The emulator **does not enforce database authentication**. Its key placeholder
-is not a real secret. Database and API ports are deliberately not published.
+is not a real secret. Database and API ports are published only on loopback.
 Admin checks happen on the server for every write, using HTTP Basic credentials
 held only in browser memory (no local storage or cookies). Reload or lock the
 portal to discard them. HTTP and a shared public password are suitable only for
@@ -112,13 +115,73 @@ link from startup. Aspire allocates ports dynamically, including the API HTTP
 endpoint and Cosmos HTTPS gateway. The staff portal is `/#admin` on that frontend
 URL and uses the same **local-only** `alligator123` password.
 
-The AppHost supplies `HTTP_ADDR` from the API's allocated target port, passes the
-Cosmos endpoint and emulator key through resource expressions, and waits for
-Cosmos before starting the API and for API readiness before starting Vite.
+On the `full-aspireified` branch, the AppHost uses **only `WithReference` for
+dependency configuration**: API -> `books`, frontend -> API. Connection values
+are not manually copied into environment variables in the AppHost.
+`.WithHttpEndpoint(env: "PORT")` supplies the API's allocated listening port.
+The API and frontend wait for their dependencies to become healthy.
+
+The Go API consumes Aspire 13.6's individual connection properties without
+parsing or rebuilding a connection string:
+
+| Injected variable | Source |
+| --- | --- |
+| `BOOKS_URI` | Cosmos account endpoint |
+| `BOOKS_ACCOUNTKEY` | Emulator account key |
+| `BOOKS_DATABASENAME` | Referenced database name |
+| `BOOKS_CONTAINERNAME` | Referenced container name |
+
+If any of those reference variables are present, all four are required.
+Incomplete references fail explicitly rather than silently mixing in standalone
+`COSMOS_*` settings. With no reference properties, the API uses the existing
+Compose/standalone configuration described above.
+
+Vite reads `services__api__http__0` from `.WithReference(backend)` and proxies
+`/api` and `/healthz` to that URL. The browser still calls the frontend origin;
+no database key or connection string is exposed to browser JavaScript. Outside
+Aspire, `API_UPSTREAM` (or `http://localhost:8080` for standalone development)
+remains supported. Malformed discovery settings fail instead of falling back.
+Production builds do not need discovery settings. Nginx startup reads the same
+Aspire discovery variable, falling back to `API_UPSTREAM` for standalone Compose.
+
+The dashboard exposes **`admin-password`** as a secret parameter. The AppHost
+passes it to the API as `ADMIN_PASSWORD`; the local-only default is
+`alligator123`. Override it using AppHost user secrets or the environment:
+
+```sh
+Parameters__admin_password='another-local-password' aspire start --apphost ./apphost.cs
+```
+
+Restart the API after changing its parameter value. Publishing does not give
+this secret a default: deployment must supply it. The standalone Compose file
+still provides its explicitly labeled local-demo default. This is not production
+authentication.
+
 Both Cosmos and the Go API use `/shelf` as the partition key. Aspire supplies
 certificate trust for the emulator's HTTPS endpoint; TLS verification is not
 disabled. Cosmos data is stored separately from Compose in the
 `purr-and-prose-aspire-cosmos-data` named volume.
+
+The Cosmos setup uses native Aspire APIs. The emulator declaration is active;
+the Azure-only `AddAzureCosmosDB(...).WithAccessKeyAuthentication()` declaration
+is commented out directly below it. To use Azure during local development,
+comment out the emulator declaration and uncomment the Azure one. That requires
+Azure credentials and can provision billable resources.
+
+### Clear and seed command
+
+On the **api** resource in the AppHost dashboard, choose **Clear and seed
+database** and confirm the destructive prompt. It uses the same secret admin
+parameter as the portal. It deletes the configured **books container**, then
+recreates `/shelf` and restores exactly the four samples and seed marker; it
+does not delete other containers, the database, or the account. Concurrent
+requests in this API instance wait while reset runs. This is a destructive,
+non-transactional maintenance action: if it fails midway, the command reports
+failure and can be retried.
+
+The underlying `POST /api/admin/database/reset` endpoint requires HTTP Basic
+admin authentication **and** `X-Confirm-Reset: clear-and-seed`. It is not called
+at startup or during normal shutdown. Do not invoke it on data you want to keep.
 
 To exercise the existing browser tests against Aspire instead of Compose:
 
@@ -134,6 +197,90 @@ aspire logs api --apphost ./apphost.cs
 aspire logs frontend --apphost ./apphost.cs
 aspire stop --apphost ./apphost.cs
 ```
+
+### Backend traces
+
+The Go API exports OpenTelemetry traces to the Aspire dashboard using the
+automatically injected OTLP settings; no additional AppHost wiring is needed.
+Each API request has a route-named server span, with child HTTP client spans for
+its Cosmos calls. Incoming W3C `traceparent`/`tracestate` and baggage propagate
+through the API. Failed requests include their HTTP error status; `/healthz`
+probes and their Cosmos reads are excluded to keep the demo readable.
+Request/response bodies, passwords, and authorization headers are not captured.
+
+Open **Traces** in the Aspire dashboard, select **api**, then reload the shelf
+or add/remove a listing. The trace shows the API request and its Cosmos HTTP
+call(s). Alternatively, from the repository root:
+
+```sh
+aspire otel traces api --apphost ./apphost.cs
+```
+
+Tracing is disabled when neither `OTEL_EXPORTER_OTLP_ENDPOINT` nor
+`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` is configured, so ordinary Compose needs no
+collector. `OTEL_SDK_DISABLED=true` also disables it. For another collector, use
+standard OTLP environment variables: `OTEL_SERVICE_NAME` (default `api`),
+`OTEL_RESOURCE_ATTRIBUTES`, `OTEL_EXPORTER_OTLP_ENDPOINT`, protocol (`grpc`,
+the default, or `http/protobuf`), headers, and certificates. Signal-specific
+`OTEL_EXPORTER_OTLP_TRACES_*` settings override the general exporter settings.
+HTTPS certificate validation stays enabled. Pending spans are flushed after
+active HTTP requests finish during normal shutdown; export errors are logged.
+
+## Publish with Aspire to Docker Compose
+
+The AppHost includes the native Docker Compose environment. It publishes the
+Go API using `src/api/Dockerfile` and the built Vite site using the existing
+Nginx Dockerfile, not a Vite development server. The Nginx runtime consumes
+`WithReference` service discovery, so browser requests stay same-origin.
+Health checks, API-before-frontend readiness, loopback port bindings, and
+the telemetry dashboard are declared in the AppHost.
+
+```sh
+# Artifacts only: no Azure provisioning and no deployment.
+aspire publish --apphost ./apphost.cs -o ./aspire-output
+```
+
+**Native `RunAsEmulator` applies only to local Aspire run mode.** Aspire
+publishing generates Azure Cosmos/Key Vault Bicep infrastructure and Compose
+services for the API, frontend, and telemetry dashboard. It does **not** package
+the emulator into generated Compose. `WithAccessKeyAuthentication()` supplies
+the account key required by the Go SDK through Aspire's native secret handling.
+For an entirely local, account-free Compose demo, keep using
+`docker compose -f src/compose.yaml up --build`.
+
+Review `aspire-output/docker-compose.yaml`, `.env`, and the Bicep files before
+deployment. `.env` contains blank image, password, and Azure-output placeholders;
+`aspire publish` alone does not build images or resolve Azure credentials.
+The output directory is git-ignored. Do not commit resolved environment files.
+
+When you intentionally want to provision/deploy, configure Azure sign-in,
+subscription, location, and resource group through Aspire's deployment
+configuration and supply the secret parameter:
+
+```sh
+export Parameters__admin_password='choose-a-private-deployment-password'
+aspire deploy --apphost ./apphost.cs --list-steps
+# Creates billable Azure resources and starts the Compose deployment:
+aspire deploy --apphost ./apphost.cs
+```
+
+The deployed frontend is `http://localhost:8088`, API `http://localhost:8086`,
+and telemetry dashboard `http://localhost:18888`. Keep these loopback bindings
+for a trusted demo; add real HTTPS/identity before exposing a server publicly.
+The deployed standalone dashboard displays telemetry, not AppHost resource
+commands or parameters. The authenticated reset endpoint remains available.
+Do not run generated and standalone Compose concurrently on these same ports.
+
+For a normal stop of an already prepared deployment, use the generated
+environment-specific `.env.<environment>` file:
+
+```sh
+docker compose --env-file aspire-output/.env.<environment> -f aspire-output/docker-compose.yaml stop
+```
+
+This preserves data and does not delete Azure infrastructure. Do not use
+`aspire destroy` as a normal shutdown; tearing down cloud data requires a
+separate, explicit decision.
 
 ## Verification
 
@@ -158,16 +305,26 @@ go vet ./...
 cd ../frontend
 npm ci
 npm run build
+npm run test:config
 npx playwright install chromium
 npm test
 ```
 
-The browser suite runs against the already-running Compose app. It uses real
+`npm test` runs the discovery/proxy configuration tests and the browser suite.
+The browser suite runs against the already-running Compose app by default. It uses real
 Cosmos data for add/reload/remove, tests password rejection, and separately mocks
 responses for deterministic loading, empty, error/retry, and markup-safety states.
 It cleans up its test listing. Use `BASE_URL` / `ADMIN_PASSWORD` to match overrides.
 Go handler tests use an in-memory test double and cover validation and database
-failures; Docker API builds run these tests too.
+failures. Configuration tests cover Aspire reference properties, complete-reference
+requirements, Compose compatibility, HTTP opt-in, and managed port binding.
+Tracing tests check context propagation, Cosmos child spans, error/route naming,
+health-probe exclusion, and authenticated OTLP export/shutdown over gRPC and HTTP.
+Docker API builds run these tests too.
+`TestCosmosResetIntegration` is opt-in with `COSMOS_INTEGRATION_TEST=true` and
+local emulator connection settings. It creates a uniquely named temporary
+database, exercises reset twice through the authenticated API, verifies an
+unrelated container survives, and removes only its own temporary database.
 
 From the repository root, test actual database/API restart persistence:
 

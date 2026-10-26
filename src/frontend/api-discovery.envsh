@@ -1,0 +1,9 @@
+#!/bin/sh
+if [ "${services__api__http__0+x}" = x ]; then
+    API_UPSTREAM="$services__api__http__0"
+fi
+
+case "${API_UPSTREAM:-}" in
+    http://?*|https://?*) export API_UPSTREAM ;;
+    *) echo "API_UPSTREAM or services__api__http__0 must contain an HTTP(S) API URL." >&2; exit 1 ;;
+esac

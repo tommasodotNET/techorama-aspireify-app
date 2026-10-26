@@ -6,13 +6,15 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
 	"sort"
+	"sync"
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
 	"github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/otel/trace"
 )
 
 var shelf = azcosmos.NewPartitionKeyString("books")
@@ -21,32 +23,38 @@ type cosmosStore struct {
 	client    *azcosmos.Client
 	database  *azcosmos.DatabaseClient
 	container *azcosmos.ContainerClient
+	mu        sync.RWMutex
 }
 
-func newCosmosStore() (*cosmosStore, error) {
-	credential, err := azcosmos.NewKeyCredential(os.Getenv("COSMOS_KEY"))
+func newCosmosStore(config cosmosConfig) (*cosmosStore, error) {
+	credential, err := azcosmos.NewKeyCredential(config.Key)
 	if err != nil {
 		return nil, err
 	}
-	client, err := azcosmos.NewClientWithKey(os.Getenv("COSMOS_ENDPOINT"), credential, &azcosmos.ClientOptions{
+	client, err := azcosmos.NewClientWithKey(config.Endpoint, credential, &azcosmos.ClientOptions{
 		ClientOptions: azcore.ClientOptions{
-			InsecureAllowCredentialWithHTTP: os.Getenv("COSMOS_ALLOW_HTTP") == "true",
+			InsecureAllowCredentialWithHTTP: config.AllowHTTP,
 			Retry:                           policy.RetryOptions{MaxRetries: 2, TryTimeout: 5 * time.Second},
 			Telemetry:                       policy.TelemetryOptions{Disabled: true},
+			Transport: &http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport,
+				otelhttp.WithFilter(func(r *http.Request) bool {
+					return trace.SpanContextFromContext(r.Context()).IsValid()
+				}),
+			)},
 		},
 	})
 	if err != nil {
 		return nil, err
 	}
-	database, err := client.NewDatabase(env("COSMOS_DATABASE", "catbooks"))
+	database, err := client.NewDatabase(config.Database)
 	if err != nil {
 		return nil, err
 	}
-	container, err := database.NewContainer(env("COSMOS_CONTAINER", "books"))
+	container, err := database.NewContainer(config.Container)
 	if err != nil {
 		return nil, err
 	}
-	return &cosmosStore{client, database, container}, nil
+	return &cosmosStore{client: client, database: database, container: container}, nil
 }
 
 func hasStatus(err error, status int) bool {
@@ -112,6 +120,8 @@ func sampleBooks() []Book {
 }
 
 func (s *cosmosStore) List(ctx context.Context) ([]Book, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	books := []Book{}
 	pager := s.container.NewQueryItemsPager("SELECT * FROM c WHERE c.kind = 'book'", shelf, nil)
 	for pager.More() {
@@ -137,6 +147,8 @@ func (s *cosmosStore) List(ctx context.Context) ([]Book, error) {
 }
 
 func (s *cosmosStore) Create(ctx context.Context, book Book) error {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	data, err := json.Marshal(book)
 	if err != nil {
 		return err
@@ -146,6 +158,8 @@ func (s *cosmosStore) Create(ctx context.Context, book Book) error {
 }
 
 func (s *cosmosStore) Delete(ctx context.Context, id string) error {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	_, err := s.container.DeleteItem(ctx, shelf, id, nil)
 	if hasStatus(err, http.StatusNotFound) {
 		return errNotFound
@@ -154,6 +168,21 @@ func (s *cosmosStore) Delete(ctx context.Context, id string) error {
 }
 
 func (s *cosmosStore) Ready(ctx context.Context) error {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	_, err := s.container.Read(ctx, nil)
 	return err
+}
+
+func (s *cosmosStore) Reset(ctx context.Context) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	_, err := s.container.Delete(ctx, nil)
+	if err != nil && !hasStatus(err, http.StatusNotFound) {
+		return fmt.Errorf("delete books container: %w", err)
+	}
+	if err := s.Initialize(ctx); err != nil {
+		return fmt.Errorf("recreate and seed books container: %w", err)
+	}
+	return nil
 }

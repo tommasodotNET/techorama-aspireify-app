@@ -19,6 +19,8 @@ import (
 	"syscall"
 	"time"
 	"unicode/utf8"
+
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 type Book struct {
@@ -47,6 +49,7 @@ type bookStore interface {
 	Create(context.Context, Book) error
 	Delete(context.Context, string) error
 	Ready(context.Context) error
+	Reset(context.Context) error
 }
 
 func handler(store bookStore, password string) http.Handler {
@@ -86,6 +89,21 @@ func handler(store bookStore, password string) http.Handler {
 	}
 	mux.HandleFunc("POST /api/admin/check", admin(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
+	}))
+	mux.HandleFunc("POST /api/admin/database/reset", admin(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("X-Confirm-Reset") != "clear-and-seed" {
+			writeError(w, http.StatusBadRequest, "Confirm deletion with X-Confirm-Reset: clear-and-seed.")
+			return
+		}
+		if err := store.Reset(r.Context()); err != nil {
+			log.Printf("reset books container: %v", err)
+			writeError(w, http.StatusServiceUnavailable, "Could not reset the bookshelf. The reset may be incomplete; retry the command.")
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]any{
+			"message":     "Books container cleared and sample books restored.",
+			"sampleBooks": len(sampleBooks()),
+		})
 	}))
 	mux.HandleFunc("POST /api/books", admin(func(w http.ResponseWriter, r *http.Request) {
 		mediaType, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
@@ -139,12 +157,21 @@ func handler(store bookStore, password string) http.Handler {
 			w.WriteHeader(http.StatusNoContent)
 		}
 	}))
+	traced := otelhttp.NewHandler(mux, "api",
+		otelhttp.WithFilter(func(r *http.Request) bool { return r.URL.Path != "/healthz" }),
+		otelhttp.WithSpanNameFormatter(func(_ string, r *http.Request) string {
+			if r.Pattern != "" {
+				return r.Pattern
+			}
+			return r.Method
+		}),
+	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "no-store")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
 		defer cancel()
-		mux.ServeHTTP(w, r.WithContext(ctx))
+		traced.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
@@ -187,14 +214,33 @@ func env(name, fallback string) string {
 }
 
 func run() error {
-	for _, key := range []string{"COSMOS_ENDPOINT", "COSMOS_KEY", "ADMIN_PASSWORD"} {
-		if os.Getenv(key) == "" {
-			return fmt.Errorf("%s is required", key)
-		}
+	config, err := loadCosmosConfig()
+	if err != nil {
+		return err
+	}
+	address, err := listenAddress()
+	if err != nil {
+		return err
+	}
+	password := os.Getenv("ADMIN_PASSWORD")
+	if password == "" {
+		password = demoAdminPassword
+		log.Print("WARNING: ADMIN_PASSWORD is unset; using the public local-demo password. Do not expose this app to untrusted networks.")
 	}
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
-	store, err := newCosmosStore()
+	shutdownTracing, err := initTracing(ctx)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		shutdown, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := shutdownTracing(shutdown); err != nil {
+			log.Printf("tracing shutdown: %v", err)
+		}
+	}()
+	store, err := newCosmosStore(config)
 	if err != nil {
 		return err
 	}
@@ -213,11 +259,13 @@ func run() error {
 		}
 	}
 	server := &http.Server{
-		Addr: env("HTTP_ADDR", ":8080"), Handler: handler(store, os.Getenv("ADMIN_PASSWORD")),
+		Addr: address, Handler: handler(store, password),
 		ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second,
 		WriteTimeout: 15 * time.Second, IdleTimeout: 60 * time.Second,
 	}
+	shutdownDone := make(chan struct{})
 	go func() {
+		defer close(shutdownDone)
 		<-ctx.Done()
 		shutdown, done := context.WithTimeout(context.Background(), 10*time.Second)
 		defer done()
@@ -228,6 +276,7 @@ func run() error {
 	log.Printf("Purr & Prose API listening on %s", server.Addr)
 	err = server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
+		<-shutdownDone
 		return nil
 	}
 	return err

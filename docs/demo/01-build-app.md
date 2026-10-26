@@ -13,10 +13,10 @@ only in Part 2.
 Build a small, working application for a live coding demo. Put the code in the src folder.
 
 App brief:
-The app is a store for [blank] to sell [something].
-There is a frontend written in [blank] with style [blank].
-There ia a backend written in [blank] that talks a storage [blank].
-You have a password protected admin portal where password is [blank].
+Build a store for [animal] that sells [things you can buy].
+The frontend is [least favorite JS frontend stack] with [decade] style design.
+The backend is [favorite programming language] with [last used database tech] and deploys to [A or B].
+There is an admin dashboard for adding/removing items to the store with password [Bad password ideas].
 
 Inspect the repository and follow its instructions before making changes. If the
 brief leaves implementation details open, choose simple, mainstream defaults.

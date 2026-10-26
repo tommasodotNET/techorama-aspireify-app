@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "test": "playwright test"
+    "test": "npm run test:config && playwright test",
+    "test:config": "node --test vite.config.test.js"
   },
   "devDependencies": {
     "@playwright/test": "1.56.1",

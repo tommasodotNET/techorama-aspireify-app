@@ -49,6 +49,16 @@ func (s *memoryStore) Ready(context.Context) error {
 	}
 	return nil
 }
+func (s *memoryStore) Reset(context.Context) error {
+	if s.fail {
+		return errors.New("database unavailable")
+	}
+	s.books = make(map[string]Book)
+	for _, book := range sampleBooks() {
+		s.books[book.ID] = book
+	}
+	return nil
+}
 
 func request(h http.Handler, method, path, body, password string) *httptest.ResponseRecorder {
 	r := httptest.NewRequest(method, path, strings.NewReader(body))
@@ -70,7 +80,7 @@ func TestAdminWorkflow(t *testing.T) {
 		t.Fatalf("empty shelf: %d %s", w.Code, w.Body.String())
 	}
 	for _, password := range []string{"", "wrong"} {
-		for _, route := range []struct{ method, path string }{{"POST", "/api/admin/check"}, {"POST", "/api/books"}, {"DELETE", "/api/books/anything"}} {
+		for _, route := range []struct{ method, path string }{{"POST", "/api/admin/check"}, {"POST", "/api/admin/database/reset"}, {"POST", "/api/books"}, {"DELETE", "/api/books/anything"}} {
 			if w := request(h, route.method, route.path, validBook, password); w.Code != 401 {
 				t.Fatalf("unprotected write: %s %s: %d", route.method, route.path, w.Code)
 			}
@@ -102,6 +112,36 @@ func TestAdminWorkflow(t *testing.T) {
 	}
 	if len(store.books) != 0 {
 		t.Fatal("book still stored")
+	}
+}
+
+func TestDatabaseResetRequiresAuthenticationAndConfirmation(t *testing.T) {
+	store := &memoryStore{books: map[string]Book{"custom": {ID: "custom", Title: "Keep until confirmed"}}}
+	h := handler(store, "test-password")
+	if w := request(h, "POST", "/api/admin/database/reset", "", "test-password"); w.Code != http.StatusBadRequest || len(store.books) != 1 {
+		t.Fatalf("unconfirmed reset changed data: %d", w.Code)
+	}
+	for _, password := range []string{"", "wrong", "test-password"} {
+		r := httptest.NewRequest("POST", "/api/admin/database/reset", nil)
+		r.SetBasicAuth("admin", password)
+		r.Header.Set("X-Confirm-Reset", "clear-and-seed")
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, r)
+		if password != "test-password" {
+			if w.Code != http.StatusUnauthorized || len(store.books) != 1 {
+				t.Fatalf("unauthorized reset changed data: %d", w.Code)
+			}
+			continue
+		}
+		if w.Code != http.StatusOK || len(store.books) != len(sampleBooks()) || store.books["custom"].ID != "" {
+			t.Fatalf("confirmed reset did not restore only samples: %d %s", w.Code, w.Body.String())
+		}
+		store.fail = true
+		failed := httptest.NewRecorder()
+		h.ServeHTTP(failed, r.Clone(context.Background()))
+		if failed.Code != http.StatusServiceUnavailable || !strings.Contains(failed.Body.String(), "incomplete") {
+			t.Fatalf("reset failure was hidden: %d %s", failed.Code, failed.Body.String())
+		}
 	}
 }
 
