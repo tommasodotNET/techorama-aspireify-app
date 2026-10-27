@@ -1,0 +1,54 @@
+name: tall-order-demo
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: tallorder
+      POSTGRES_USER: giraffe
+      # Local-only demo credentials. Override outside this laptop demo.
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-local-fruit-demo}
+    volumes:
+      - fruit-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U giraffe -d tallorder"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  api:
+    build: ./api
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Store: Host=db;Port=5432;Database=tallorder;Username=giraffe;Password=${DB_PASSWORD:-local-fruit-demo}
+      Admin__Password: ${ADMIN_PASSWORD:-4}
+      OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-tall-order-api}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-grpc}
+      OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 15s
+    restart: unless-stopped
+  frontend:
+    build: ./frontend
+    environment:
+      API_UPSTREAM: http://api:8080
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-8080}:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+volumes:
+  fruit-data:
